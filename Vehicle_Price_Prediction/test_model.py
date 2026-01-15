@@ -1,43 +1,24 @@
 import joblib
 import pandas as pd
-import os
 
-# --------------------------------
-# Load model & feature list
-# --------------------------------
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+model = joblib.load("model.pkl")
+features = joblib.load("features.pkl")
 
-model = joblib.load(os.path.join(BASE_DIR, "model.pkl"))
-features = joblib.load(os.path.join(BASE_DIR, "features.pkl"))
-
-# --------------------------------
-# Sample input as DICTIONARY
-# (keys must match training column names)
-# --------------------------------
-input_dict = {
+sample_input = {
     "km_driven": 45000,
     "mileage": 18.5,
     "engine": 1197,
     "max_power": 82,
     "seats": 5,
-    "fuel": 2,          # Petrol
-    "seller_type": 1,   # Individual
-    "transmission": 1,  # Manual
-    "owner": 0,         # First owner
+    "fuel": 2,
+    "seller_type": 1,
+    "transmission": 1,
+    "owner": 0,
     "vehicle_age": 6
 }
 
-# Convert to DataFrame
-input_df = pd.DataFrame([input_dict])
+df = pd.DataFrame([sample_input])
+df = df.reindex(columns=features, fill_value=0)
 
-# --------------------------------
-# Align input with training features
-# --------------------------------
-input_df = input_df.reindex(columns=features, fill_value=0)
-
-# --------------------------------
-# Predict
-# --------------------------------
-predicted_price = model.predict(input_df)[0]
-
-print("Predicted Vehicle Price:", int(predicted_price))
+prediction = model.predict(df)[0]
+print("Predicted Vehicle Price:", int(prediction))
